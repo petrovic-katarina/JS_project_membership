@@ -25,43 +25,43 @@
   <script>
 
     var dest1 = {
-      "name" : "beograd",
+      "name" : "Beograd",
       "price" : 1500,
       "type" : "ordinary"  
     };
 
     var dest2 = {
-      "name" : "vienna",
+      "name" : "Vienna",
       "price" : 2500,
       "type" : "ordinary"  
     };
 
     var dest3 = {
-      "name" : "budapest",
+      "name" : "Budapest",
       "price" : 1800,
       "type" : "ordinary"  
     };
 
     var dest4 = {
-      "name" : "london",
+      "name" : "London",
       "price" : 3500,
       "type" : "silver"  
     };
 
     var dest5 = {
-      "name" : "madrid",
+      "name" : "Madrid",
       "price" : 1500,
       "type" : "silver"  
     };
 
     var dest6 = {
-      "name" : "moscow",
+      "name" : "Moscow",
       "price" : 3500,
       "type" : "gold"  
     };
 
     var dest7 = {
-      "name" : "rome",
+      "name" : "Rome",
       "price" : 3900,
       "type" : "gold"  
     };
@@ -73,7 +73,7 @@
     };
 
     var dest9 = {
-      "name" : "new york",
+      "name" : "New York",
       "price" : 4800,
       "type" : "platinum"  
     };
@@ -91,26 +91,89 @@
 
 
     window.onload = function(){
+
+      // ?ime=Pera&prezime=Peric&status=Premium&klasa=1
       var search = window.location.search;
       var values = search.substring(1).split('&');
 
-      var objekat = {};
+      var object = {};
 
       for(var i in values) {
         var items = values[i].split('=');
-        objekat[items[0]] = items[1];
-        console.log(objekat);
-        console.log(destinations);
+
+        object[items[0]] = items[1];
       }
 
       var hello = document.getElementById('welcome_user');
-     hello.innerHTML = 'Hello, ' + objekat.ime + ' ' + objekat.prezime;
+      hello.innerHTML = `Hello ${object.ime} ${object.prezime}`
 
-     
+      var passenger_status = object.status;
+
+      if (passenger_status) {
+        var premium_member = document.getElementById('premium_member');
+        premium_member.innerHTML = `You are our premium member, with ${getMembership(object.klasa)} membership!`;
+      }
+
+      var select = document.getElementById('sel1');
+
+      if(passenger_status) {
+        var membership = getMembership(object.klasa);
+
+        for(var i in destinations) {
+          var canAdd = false;
+          var destination = destinations[i];
+
+          if(destination.type == 'platinum' && membership == 'Platinum') {
+            canAdd = true;
+          } else if (destination.type == 'gold' && (membership == 'Gold' || membership == 'Platinum')) {
+            canAdd = true;
+          } else if (destination.type == 'silver' && (membership == 'Gold' || membership == 'Platinum' || membership == 'Silver')) {
+            canAdd = true;
+          } else if(destination.type == 'ordinary'){
+            canAdd = true;
+          } else {
+            canAdd = false;
+          }
+
+          if(canAdd) {
+            select.options[select.options.length] = new Option(destinations[i].name, destinations[i].type)
+          }
+        }
+      } else {
+        for(var i in destinations) {
+          var destination = destinations[i];
+
+          if(destination.type == 'ordinary') {
+            select.options[select.options.length] = new Option(destinations[i].name, destinations[i].type)
+          }
+        }
+      }
     };
 
-    
-    
+    function getMembership(value) {
+      if(value == 1) {
+        return 'Silver'
+      } else if(value == 2) {
+        return 'Gold'
+      } else if(value == 3) {
+        return 'Platinum'
+      }
+    }
+
+    function calculate() {
+      var sel1 = document.getElementById('sel1');
+      var dest = sel1.options[sel1.selectedIndex].value;
+
+
+      for (var i in destinations) {
+        if (dest === destinations[i].type) { 
+          var paragraph = document.getElementById('paragraph');
+          paragraph.innerHTML = '<br>Cena za izabranu destinaciju je ' + destinations[i].price + '.';
+        }
+      }
+    }
+
+
   </script>
 
 </head>
